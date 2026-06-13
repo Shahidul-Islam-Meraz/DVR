@@ -1,0 +1,1473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BHL Honda DVR — Md. Shahidul Islam</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --red:#CC0000;--red-d:#990000;--red-l:#FFF0F0;--red-m:#FFCCCC;
+  --green:#0F6B32;--green-l:#EDFAF3;--green-m:#b6e8ca;
+  --amber:#7A4900;--amber-l:#FFF7E6;--amber-m:#FFD98A;
+  --blue:#003A80;--blue-l:#EBF1FF;
+  --ink:#18181B;--ink2:#3F3F46;--ink3:#71717A;
+  --sur:#FFFFFF;--sur2:#FAFAFA;--sur3:#F4F4F5;--sur4:#E4E4E7;
+  --font:'DM Sans',sans-serif;--mono:'DM Mono',monospace;
+  --r:6px;--rl:12px;
+  --shadow:0 1px 4px rgba(0,0,0,.08);
+}
+html{font-size:15px;-webkit-font-smoothing:antialiased;}
+body{font-family:var(--font);background:var(--sur2);color:var(--ink);min-height:100vh;}
+.topbar{background:var(--ink);padding:0 20px;height:52px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
+.logo-h{width:28px;height:28px;background:var(--red);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;flex-shrink:0;}
+.logo-text{font-size:13px;font-weight:600;color:#fff;margin-left:9px;}
+.topbar-aic{font-size:10px;color:rgba(255,255,255,.4);font-family:var(--mono);}
+.tabs{display:flex;gap:2px;background:var(--ink);padding:0 20px 8px;overflow-x:auto;}
+.tab{padding:6px 14px;font-size:12px;font-weight:500;border-radius:var(--r);color:rgba(255,255,255,.5);cursor:pointer;white-space:nowrap;transition:all .15s;border:none;background:transparent;}
+.tab:hover{background:rgba(255,255,255,.08);color:#fff;}
+.tab.active{background:var(--red);color:#fff;}
+.wrap{max-width:900px;margin:0 auto;padding:20px 16px 80px;}
+.pg{display:none;}.pg.active{display:block;}
+.vstep-pg{display:none;}.vstep-pg.active{display:block;}
+.sec{background:#fff;border:1px solid var(--sur4);border-radius:var(--rl);margin-bottom:12px;box-shadow:var(--shadow);}
+.sec-hd{padding:12px 16px;border-bottom:1px solid var(--sur3);display:flex;align-items:center;justify-content:space-between;gap:8px;}
+.sec-title{font-size:13px;font-weight:600;}
+.sec-sub{font-size:11px;color:var(--ink3);font-family:var(--mono);}
+.sec-bd{padding:14px 16px;}
+.fg2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.fg3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;}
+.fg4{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
+.field{display:flex;flex-direction:column;gap:4px;}
+.field label{font-size:10px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.5px;}
+.req{color:var(--red);}
+.fi,.fta{width:100%;padding:8px 11px;border:1px solid var(--sur4);border-radius:var(--r);font-size:13px;color:var(--ink);background:#fff;outline:none;font-family:var(--font);transition:border-color .15s;}
+.fi:focus,.fta:focus{border-color:var(--red);box-shadow:0 0 0 3px rgba(204,0,0,.07);}
+.fta{resize:vertical;min-height:64px;}
+.fi[readonly]{background:var(--sur3);color:var(--ink3);}
+.fi::placeholder,.fta::placeholder{color:#C0C0C6;}
+/* KPI table */
+.kpi-tbl{width:100%;border-collapse:collapse;font-size:12px;}
+.kpi-tbl th{background:var(--ink);color:#fff;padding:7px 10px;text-align:left;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;}
+.kpi-tbl td{padding:7px 10px;border-bottom:1px solid var(--sur3);}
+.kpi-tbl tr:last-child td{border-bottom:none;}
+.kpi-tbl tr:nth-child(even) td{background:var(--sur2);}
+.kpi-tbl .ach-good{color:var(--green);font-weight:700;}
+.kpi-tbl .ach-mid{color:var(--amber);font-weight:700;}
+.kpi-tbl .ach-bad{color:var(--red);font-weight:700;}
+.kpi-input{width:100%;padding:5px 8px;border:1px solid var(--sur4);border-radius:4px;font-size:12px;font-family:var(--font);text-align:right;}
+.kpi-input:focus{border-color:var(--red);outline:none;}
+/* Checklist */
+.chk-cat{margin-bottom:16px;}
+.chk-cat-title{font-size:11px;font-weight:700;color:#fff;background:var(--ink);padding:6px 12px;border-radius:var(--r);margin-bottom:6px;display:flex;justify-content:space-between;}
+.chk-subcat{margin-bottom:10px;padding-left:4px;}
+.chk-subcat-title{font-size:10px;font-weight:700;color:var(--red);text-transform:uppercase;letter-spacing:.4px;padding:4px 0;border-bottom:1px solid var(--sur3);margin-bottom:4px;}
+.chk-item{display:flex;align-items:flex-start;gap:9px;padding:5px 6px;border-bottom:1px solid var(--sur2);font-size:12px;cursor:pointer;border-radius:4px;transition:background .1s;}
+.chk-item:hover{background:var(--sur2);}
+.chk-item input[type=checkbox]{width:14px;height:14px;accent-color:var(--green);flex-shrink:0;margin-top:1px;cursor:pointer;}
+.chk-note{font-size:11px;color:var(--ink3);background:var(--sur3);padding:7px 11px;border-radius:var(--r);margin-bottom:12px;}
+.cat-score{font-size:10px;font-family:var(--mono);padding:2px 8px;border-radius:10px;}
+/* Findings */
+.find-item{background:var(--sur2);border:1px solid var(--sur4);border-radius:var(--r);padding:12px;margin-bottom:8px;}
+.find-hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
+.find-num{font-size:10px;font-weight:700;color:var(--red);text-transform:uppercase;}
+.find-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.find-box{border-radius:var(--r);padding:8px 10px;}
+.find-lbl{font-size:9px;font-weight:700;text-transform:uppercase;color:#888;margin-bottom:3px;}
+/* Buttons */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;font-size:13px;font-weight:500;border-radius:var(--r);border:1px solid transparent;cursor:pointer;transition:all .15s;font-family:var(--font);white-space:nowrap;}
+.btn-primary{background:var(--red);color:#fff;border-color:var(--red);}
+.btn-primary:hover{background:var(--red-d);}
+.btn-primary:disabled{opacity:.5;cursor:not-allowed;}
+.btn-outline{background:#fff;color:var(--ink2);border-color:var(--sur4);}
+.btn-outline:hover{background:var(--sur3);}
+.btn-ghost{background:transparent;color:var(--ink3);border-color:transparent;}
+.btn-ghost:hover{background:var(--sur3);}
+.btn-sm{padding:5px 11px;font-size:11px;}
+.btn-green{background:var(--green);color:#fff;border-color:var(--green);}
+.btn-green:hover{background:#0a4f25;}
+.btn-lg{padding:12px 24px;font-size:15px;}
+/* Badges */
+.badge{display:inline-flex;align-items:center;font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px;}
+.badge-r{background:var(--red-l);color:var(--red);}
+.badge-g{background:var(--green-l);color:var(--green);}
+.badge-a{background:var(--amber-l);color:var(--amber);}
+.badge-gray{background:var(--sur3);color:var(--ink3);}
+.badge-blue{background:var(--blue-l);color:var(--blue);}
+/* Dashboard cards */
+.dlr-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;}
+.dlr-card{background:#fff;border:1px solid var(--sur4);border-radius:var(--rl);padding:12px 14px;box-shadow:var(--shadow);cursor:pointer;transition:all .15s;}
+.dlr-card:hover{border-color:var(--red);transform:translateY(-1px);}
+.dlr-card-name{font-size:13px;font-weight:600;margin-bottom:3px;}
+.dlr-card-meta{font-size:10px;color:var(--ink3);font-family:var(--mono);}
+.dlr-card-score{font-size:22px;font-weight:300;letter-spacing:-1px;margin-top:6px;}
+.prog-w{background:var(--sur3);border-radius:3px;height:5px;overflow:hidden;margin-top:4px;}
+.prog-f{height:5px;border-radius:3px;}
+/* Dealer picker */
+.dlr-pick{border:2px solid var(--sur4);border-radius:var(--r);padding:10px 12px;cursor:pointer;transition:all .15s;background:#fff;}
+.dlr-pick:hover{border-color:var(--red);background:var(--red-l);}
+.dlr-pick.selected{border-color:var(--red);background:var(--red-l);}
+.dlr-pick.op-off{opacity:.55;}
+.dlr-pick-name{font-size:12px;font-weight:600;}
+.dlr-pick-meta{font-size:10px;color:var(--ink3);font-family:var(--mono);margin-top:2px;}
+/* ICS */
+.ics-item{background:#fff;border:1px solid var(--sur4);border-radius:var(--r);padding:11px 13px;margin-bottom:8px;}
+.ics-hd{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;}
+.ics-gap{font-size:13px;font-weight:500;}
+.ics-meta{font-size:11px;color:var(--ink3);margin-top:2px;}
+/* History */
+.hist-card{background:#fff;border:1px solid var(--sur4);border-radius:var(--rl);padding:13px 15px;margin-bottom:8px;box-shadow:var(--shadow);}
+/* Success */
+.success-wrap{text-align:center;padding:40px 20px;}
+.success-icon{font-size:52px;margin-bottom:12px;}
+.success-title{font-size:22px;font-weight:600;margin-bottom:8px;}
+.success-sub{font-size:13px;color:var(--ink3);margin-bottom:20px;}
+/* Toast */
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(70px);background:var(--ink);color:#fff;padding:11px 20px;border-radius:var(--rl);font-size:13px;font-weight:500;transition:transform .3s;z-index:9999;}
+.toast.show{transform:translateX(-50%) translateY(0);}
+.toast.ok{background:var(--green);}
+.toast.err{background:var(--red);}
+.spinner{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+/* Co box */
+.co-box{background:var(--amber-l);border:1px solid var(--amber-m);border-radius:var(--rl);padding:12px 14px;margin-bottom:12px;}
+.co-title{font-size:10px;font-weight:700;color:var(--amber);text-transform:uppercase;letter-spacing:.5px;margin-bottom:7px;}
+.co-item{font-size:12px;padding:5px 0;border-bottom:1px solid rgba(122,73,0,.12);}
+.co-item:last-child{border-bottom:none;}
+/* Review */
+.review-kpi{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px;}
+.review-kpi-box{background:#fff;border:1px solid var(--sur4);border-radius:var(--r);padding:8px 10px;}
+.review-kpi-l{font-size:10px;color:var(--ink3);margin-bottom:2px;}
+.review-kpi-v{font-size:15px;font-weight:500;}
+/* Print */
+@media print{
+  body{background:#fff!important;}
+  .topbar,.tabs,.wrap>.pg:not(#pg-print),.toast{display:none!important;}
+  #pg-print{display:block!important;padding:18px 24px;}
+  .no-print{display:none!important;}
+  .print-header{border-bottom:3px solid #CC0000;padding-bottom:10px;margin-bottom:14px;display:flex;justify-content:space-between;align-items:flex-end;}
+  .print-logo{font-size:18px;font-weight:700;color:#CC0000;}
+  .print-sub{font-size:11px;color:#666;margin-top:2px;}
+  .print-meta{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:12px;}
+  .print-meta-box{border:1px solid #ddd;border-radius:4px;padding:6px 10px;}
+  .print-meta-lbl{font-size:8px;font-weight:700;text-transform:uppercase;color:#888;letter-spacing:.4px;}
+  .print-meta-val{font-size:12px;font-weight:600;color:#18181B;margin-top:1px;}
+  .print-sec{font-size:9px;font-weight:700;text-transform:uppercase;color:#CC0000;border-bottom:1px solid #eee;padding-bottom:3px;margin:12px 0 6px;letter-spacing:.5px;}
+  .print-kpi-row{display:grid;grid-template-columns:repeat(5,1fr);gap:5px;margin-bottom:8px;}
+  .print-kpi-box{border:1px solid #eee;border-radius:3px;padding:5px 7px;text-align:center;}
+  .print-kpi-lbl{font-size:8px;color:#888;}
+  .print-kpi-val{font-size:12px;font-weight:600;}
+  .print-finding{border:1px solid #ddd;border-radius:4px;padding:7px 9px;margin-bottom:6px;page-break-inside:avoid;}
+  .print-finding-num{font-size:9px;font-weight:700;color:#CC0000;margin-bottom:4px;}
+  .print-finding-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px;}
+  .print-fbox{border-radius:3px;padding:4px 6px;}
+  .print-fbox-lbl{font-size:8px;font-weight:700;text-transform:uppercase;color:#888;margin-bottom:2px;}
+  .print-fbox-val{font-size:10px;color:#18181B;}
+  .print-chklist{column-count:2;column-gap:14px;margin-bottom:8px;}
+  .print-chk-cat{break-inside:avoid;margin-bottom:6px;}
+  .print-chk-cat-title{font-size:9px;font-weight:700;color:#333;margin-bottom:2px;}
+  .print-chk-item{font-size:9px;padding:1px 0;display:flex;gap:4px;}
+  .print-chk-item::before{content:"✓";color:#0F6B32;font-weight:700;}
+  .print-sig{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:18px;}
+  .print-sig-box{border-top:2px solid #18181B;padding-top:5px;}
+  .print-sig-name{font-size:10px;font-weight:700;}
+  .print-sig-role{font-size:9px;color:#888;margin-top:1px;}
+  .print-sig-space{height:38px;}
+  .print-footer{margin-top:14px;border-top:1px solid #eee;padding-top:6px;font-size:8px;color:#aaa;text-align:center;}
+  .print-remarks-box{background:#fafafa;border:1px solid #eee;border-radius:3px;padding:6px 8px;font-size:10px;color:#444;min-height:28px;}
+  .print-score-pill{display:inline-block;padding:2px 9px;border-radius:12px;font-size:11px;font-weight:700;}
+}
+@media(max-width:600px){
+  .fg2,.fg3,.fg4{grid-template-columns:1fr;}
+  .find-grid{grid-template-columns:1fr;}
+  .review-kpi{grid-template-columns:1fr 1fr;}
+  .dlr-grid{grid-template-columns:1fr 1fr;}
+}
+</style>
+</head>
+<body>
+<script>
+// ═══════════════════════════════
+// CONFIG
+// ═══════════════════════════════
+const AIC_ID   = "BHL-000867";
+const AIC_NAME = "Md. Shahidul Islam";
+const AIC_GRADE= "Executive";
+const DIVISION = "Chottogram";
+const STORE_KEY= "bhl_dvr_v3_BHL000867";
+const TODAY    = new Date().toISOString().split("T")[0];
+const CUR_MONTH= TODAY.slice(0,7); // YYYY-MM
+
+const DEALERS = [
+  {id:"W04X",name:"Samia Auto",district:"Cumilla",thana:"Comilla Sadar",type:"4S DLR",status:"Operation On",holiday:"All day open",sap:"DLC1000066"},
+  {id:"CUSD00380",name:"Cumilla Bike Center",district:"Cumilla",thana:"Adarsha Sadar",type:"4S DLR",status:"Operation On",holiday:"Friday",sap:"DLC1000348"},
+  {id:"HASP007",name:"Samia Auto HASP",district:"Cumilla",thana:"Chandina",type:"HASP DLR",status:"Operation On",holiday:"Friday",sap:""},
+  {id:"CUSD00328",name:"B.Baria Honda Gallery",district:"B.Baria",thana:"B.Baria Sadar",type:"4S DLR",status:"Operation On",holiday:"Friday",sap:"DLC1000296"},
+  {id:"W02X",name:"HONDA GALLERY",district:"Noakhali",thana:"Maizdi",type:"4S DLR",status:"Operation On",holiday:"All day open",sap:"DLC1000050"},
+  {id:"CUSD00232",name:"Rahman Motors",district:"Noakhali",thana:"Begumgonj",type:"4S DLR",status:"Operation On",holiday:"Friday",sap:"DLC1000200"},
+  {id:"CUSD00396",name:"Rahman Motors-Subarnachar",district:"Noakhali",thana:"Subarnachar",type:"4S DLR",status:"Operation On",holiday:"Friday",sap:"DLC1000364"},
+  {id:"CUSD00340",name:"Premium Motors",district:"Lakshmipur",thana:"Ramganj",type:"4S DLR",status:"Operation On",holiday:"Friday",sap:"DLC1000308"},
+  {id:"DLC100396",name:"N Rahman Motors",district:"Lakshmipur",thana:"Lakshmipur Sadar",type:"4S DLR",status:"Operation On",holiday:"Friday",sap:"DLC1000396"},
+];
+
+const CHECKLIST = [
+  {cat:"Service Entrance", subs:[
+    {sub:"Workshop Opening / Closing time", items:[
+      "Service center open 7 days with technician roster system",
+      "Availability of front facia (4S combined or 2S with 2D facia)",
+      "Service signboard clearly visible from outside the dealership",
+      "Business hours and holidays clearly mentioned on signboard",
+      "Lunch time and break hours clearly mentioned in service center",
+    ]},
+    {sub:"Parking facility of workshop", items:[
+      "Availability of parking area",
+      "Demarcation at parking area",
+      "Waiting for service and ready for delivery zones marked",
+      "Shed available at parking area",
+    ]},
+  ]},
+  {cat:"Reception", subs:[
+    {sub:"Warranty policy / PDI explain to customer", items:[
+      "Conduct PDI and explain warranty policy to customer",
+      "After PDI take customer acknowledgement sign",
+      "Explain to customers by Service Adviser",
+      "Explain in front of vehicle",
+      "Keep record for PDI check sheet",
+    ]},
+    {sub:"Reminder call for service", items:[
+      "Record customer data (Updated)",
+      "Do reminder call activity",
+      "Service adviser fills up remarks info during RM call",
+      "Use reminder sticker for next service",
+      "Exclusive service caller / CR availability",
+    ]},
+    {sub:"Service booking facility", items:[
+      "Availability of service booking facility online (monthly reference, Google sheet, FB promo)",
+      "Manually dedicated phone number with monthly log sheet",
+      "Phone number / Link visible to customer",
+    ]},
+    {sub:"Service staff behaviour & politeness", items:[
+      "Service advisor gives Salam",
+      "Dealer staff communicate with smiling face and polite manner",
+      "Give attention within 2 minutes",
+      "Customer can recognize service advisor (Name plate / ID card)",
+    ]},
+    {sub:"Understand customer needs & problem", items:[
+      "Politely ask the purpose of customer visit",
+      "Take maintenance and riding history from customer",
+      "Reconfirm customer concern and write customer voice at job card",
+      "Someone checks vehicle condition visually (SA or Technician)",
+    ]},
+    {sub:"Estimate of cost & time informed", items:[
+      "Share estimate time mentioned in blank area of job card",
+      "Follow BHL labor charge guideline",
+      "Labor chart installed at visible place for customer",
+      "Share labor charge and parts cost separately (breakdown)",
+      "Share estimate cost mentioned in blank area of job card",
+    ]},
+  ]},
+  {cat:"Service Quality", subs:[
+    {sub:"Service Repair Quality", items:[
+      "Availability of technician as per pit (excl. washman/helper/assistant)",
+      "Availability of MT technician (70% of total technician)",
+      "Availability of RT technician (50% of total technician)",
+      "Availability of DT technician (20% of total technician)",
+      "Use of MCS tool (if available and in use)",
+      "Sr. Technicians understand CSB (BHL) guideline",
+      "Technicians understand PM service and parts requirement as per PM schedule",
+      "Technician can check, understand and use shop manual",
+      "Skill technician retention activities (incentive/attendance/accommodation)",
+    ]},
+    {sub:"Service Time", items:[
+      "Availability of pit number (Demand x 60%, 1 Pit = 200 sv/monthly)",
+      "PIT utilization rate (>100%=5, >90%=3, below 90%=2)",
+      "Service advisor uses Work Control Board",
+      "Update estimated time for additional job at work control board / job card",
+      "Service advisor distributes job as per technician skill and workload",
+    ]},
+    {sub:"Warranty Operation", items:[
+      "Dealer staff can generate SAQR to BHL for any market complaint",
+      "Warranty document and parts sent to BHL within 1-5 of the month",
+      "Service Advisor keeps records of all updated service bulletins",
+      "SA understands 5W2H and makes report as per 5W2H",
+    ]},
+    {sub:"MC care during service", items:[
+      "All technicians are above 18 years old",
+      "Technician takes care of body parts during repair work",
+      "Technician uses right tools for right job",
+    ]},
+  ]},
+  {cat:"Delivery", subs:[
+    {sub:"Explanation about work", items:[
+      "Explain whole service work before delivery",
+      "Confirm final inspection or test ride before delivery",
+      "Inform next service information during delivery (reminder sticker and explain)",
+      "Offer replaced parts to customer",
+    ]},
+    {sub:"Service bill amount was reasonable", items:[
+      "Use labor charge as per BHL standard",
+      "Discount / VAT information clearly mentioned at invoice",
+      "Availability of labor chart",
+    ]},
+    {sub:"MC cleanliness after servicing", items:[
+      "Offer free wash for every free service",
+      "Availability of washing bay",
+      "Availability of washing tools (brush, gum boot, shampoo/foam)",
+      "Availability of dedicated washing man",
+      "Availability of washing machine",
+    ]},
+  ]},
+  {cat:"Cleanness & Facility", subs:[
+    {sub:"Overall cleanness at workshop", items:[
+      "Clean workshop minimum 2 times a day",
+      "Availability of proper lighting and airflow system",
+      "Workshop 3S maintained",
+      "Trashing availability as per requirement (pit number + 1)",
+      "Maintain cleaning roster sheet",
+      "Service centre painting (pit and/or all walls)",
+    ]},
+    {sub:"Comfortness of waiting lounge", items:[
+      "Availability of adequate lighting and fan in waiting area",
+      "Availability of customer waiting area",
+      "Seating capacity as per standard (30% of per day avg visit)",
+      "Availability of sofa",
+      "Availability of exclusive service customer waiting zone",
+    ]},
+    {sub:"Facility at waiting lounge", items:[
+      "Availability of drinking water (water filter)",
+      "Availability of BHL Toll Free Number PVC board at visible place",
+      "Availability of tea / coffee facility",
+      "Availability of WiFi with open password",
+      "Availability of AC",
+      "Availability of premium beverages (Cola / Coffee machine / Fridge)",
+    ]},
+  ]},
+  {cat:"Parts Satisfaction", subs:[
+    {sub:"Parts Availability", items:[
+      "Spare parts total stock based on DLR monthly sales (>3M=10, >2M=7, <2M=4)",
+      "DLR maintains month end safety DLR balance (>=10M=10, >=8M=7, <8M=4)",
+      "PM parts stock (>=3M=10, >1M=7, <1M=4)",
+      "Maintain parts stock (Excel or software updated with sheet)",
+      "DLR follows own MSL stock sheet (BHL provided or own made)",
+      "Maintain customer back order (BO) / Advance Book Parts list",
+    ]},
+    {sub:"Parts Cost", items:[
+      "Follow updated price list (check price list / software)",
+      "Genuine and non-genuine accessories separately displayed",
+      "Availability of parts price QR code at visible place",
+      "Availability of price tag at display rack",
+    ]},
+    {sub:"Warehouse Facility", items:[
+      "Bin box availability and location marking as per stock list",
+      "Availability of proper lighting in warehouse",
+      "Availability of standard parts rack (large, medium and small)",
+      "Availability of engine oil pallet (wooden or plastic)",
+    ]},
+  ]},
+  {cat:"Customer Engagement", subs:[
+    {sub:"Indoor Camp", items:[
+      "Indoor Camp conducted (Event Qty: >6=10, >2=7, <2=4)",
+      "Indoor Camp service visit number (>=480=10, >=300=7, <300=5)",
+    ]},
+    {sub:"Outdoor Camp", items:[
+      "Outdoor Camp conducted (Event Qty: >=6=10, >=4=7, <4=4)",
+      "Outdoor Camp service visit number (>=180=10, >=120=7, <120=4)",
+    ]},
+    {sub:"Mega Camp", items:[
+      "Mega service event conducted",
+      "Mega Camp service visit number (>400=7, >300=5, >200=3)",
+      "Mega Camp DLR expense (>1.5L=6, 1-1.5L=4, <1L=2)",
+    ]},
+    {sub:"Customer Meet Program", items:[
+      "Customer meet program conducted",
+      "Attended customer number (>100=10, 50-100=7, <50=4)",
+    ]},
+    {sub:"Technician Meet Program", items:[
+      "Technician meet program conducted",
+      "Attended technician number (>100=10, 50-100=7, <50=4)",
+    ]},
+  ]},
+];
+
+const KPI_DEFS = [
+  {key:"svcVisit",  label:"Service Visit",       unit:"jobs"},
+  {key:"scrPct",    label:"SCR %",                unit:"%"},
+  {key:"eoRetail",  label:"EO Retail (In-house)", unit:"BDT"},
+  {key:"eoWhole",   label:"EO Wholesale",         unit:"BDT"},
+  {key:"partsRetail",label:"Parts Retail",        unit:"BDT"},
+  {key:"partsWhole", label:"Parts Wholesale",     unit:"BDT"},
+  {key:"accWhole",  label:"Accessories Wholesale",unit:"BDT"},
+  {key:"dcsi",      label:"DCSI Score",           unit:"%"},
+];
+
+const MAX_SCORE = CHECKLIST.reduce((a,c)=>a+c.subs.reduce((b,s)=>b+s.items.length,0),0);
+
+// ═══════════════════════════════
+// STATE
+// ═══════════════════════════════
+let state = {
+  selectedDlr: null,
+  vCS: {},        // checklist state
+  vFinds: [],     // findings
+  kpiTargets: {}, // {key: target}
+  kpiActuals: {}, // {key: actual}
+  bizComment: "",
+  remarks: "",
+  visitDate: TODAY,
+};
+
+// Persistent storage
+let db = JSON.parse(localStorage.getItem(STORE_KEY) || '{"visits":[],"ics":[]}');
+
+const $ = id => document.getElementById(id);
+
+// ═══════════════════════════════
+// INIT
+// ═══════════════════════════════
+function init(){
+  $("topbar-aic").textContent = AIC_NAME + " · " + AIC_ID;
+  buildTabs();
+  showTab("visit");
+}
+
+// ═══════════════════════════════
+// TABS
+// ═══════════════════════════════
+const TABS = [
+  {id:"visit",   label:"📝 New Visit"},
+  {id:"dash",    label:"📊 My Dashboard"},
+  {id:"ics",     label:"📋 My ICS"},
+  {id:"history", label:"🕐 History"},
+  {id:"export",  label:"⬇ Download Excel"},
+];
+
+function buildTabs(){
+  const bar = $("tab-bar");
+  TABS.forEach(t=>{
+    const b = document.createElement("button");
+    b.className="tab"; b.dataset.tab=t.id; b.textContent=t.label;
+    b.onclick=()=>showTab(t.id);
+    bar.appendChild(b);
+  });
+}
+
+function showTab(id){
+  document.querySelectorAll(".pg").forEach(p=>p.classList.remove("active"));
+  document.querySelectorAll(".tab").forEach(b=>b.classList.remove("active"));
+  $("pg-"+id).classList.add("active");
+  const btn = document.querySelector(`.tab[data-tab="${id}"]`);
+  if(btn) btn.classList.add("active");
+  if(id==="dash")   buildDashboard();
+  if(id==="ics")    buildICS();
+  if(id==="history")buildHistory();
+  if(id==="export") buildExport();
+  if(id==="visit")  buildVisitForm();
+  window.scrollTo(0,0);
+}
+
+// ═══════════════════════════════
+// VISIT FORM — STEP NAVIGATION
+// ═══════════════════════════════
+let visitStep = 0;
+const VSTEPS = ["Dealer & Date","KPIs","Checklist","Findings","Review"];
+
+function buildVisitForm(){
+  buildStepNav();
+  buildDealerCards();
+  buildKPITable();
+  buildChecklist();
+  goVStep(0);
+}
+
+function buildStepNav(){
+  const nav = $("vstep-nav");
+  nav.innerHTML = VSTEPS.map((l,i)=>
+    `<button class="tab ${i===0?"active":""}" data-vstep="${i}" onclick="goVStep(${i})" style="background:${i===0?"var(--red)":"transparent"};">${l}</button>`
+  ).join("");
+}
+
+function goVStep(i){
+  if(i>0 && !state.selectedDlr){toast("Please select a dealer first","err");return;}
+  if(i>0 && !state.visitDate){toast("Please enter the visit date","err");return;}
+  if(i===4) buildReview();
+  visitStep = i;
+  document.querySelectorAll(".vstep-pg").forEach(p=>p.classList.remove("active"));
+  document.querySelectorAll("[data-vstep]").forEach(b=>{
+    b.classList.remove("active");
+    b.style.background = parseInt(b.dataset.vstep)===i?"var(--red)":"transparent";
+    b.style.color = parseInt(b.dataset.vstep)===i?"#fff":"rgba(255,255,255,.5)";
+  });
+  $("vstep-"+i).classList.add("active");
+  window.scrollTo(0,0);
+}
+
+// ═══════════════════════════════
+// STEP 0 — DEALER & DATE
+// ═══════════════════════════════
+function buildDealerCards(){
+  const wrap = $("dlr-cards");
+  const on  = DEALERS.filter(d=>d.status==="Operation On");
+  const off = DEALERS.filter(d=>d.status!=="Operation On");
+  wrap.innerHTML = [...on,...off].map(d=>`
+    <div class="dlr-pick${d.status!=="Operation On"?" op-off":""}" id="dpick-${d.id}" onclick="selectDlr('${d.id}')">
+      <div class="dlr-pick-name">${d.name}
+        ${d.status!=="Operation On"?'<span class="badge badge-r" style="margin-left:4px;font-size:9px;">OFF</span>':""}
+        ${d.type==="HASP DLR"?'<span class="badge badge-blue" style="margin-left:4px;font-size:9px;">HASP</span>':""}
+      </div>
+      <div class="dlr-pick-meta">${d.id} · ${d.district} · ${d.thana}</div>
+      <div style="font-size:10px;color:var(--ink3);margin-top:2px;">🗓 ${d.holiday}</div>
+    </div>`).join("");
+}
+
+function selectDlr(id){
+  state.selectedDlr = DEALERS.find(d=>d.id===id);
+  document.querySelectorAll(".dlr-pick").forEach(e=>e.classList.remove("selected"));
+  $("dpick-"+id).classList.add("selected");
+  loadCarryover(id);
+  // Pre-fill last month's targets if available
+  const dlrVisits = db.visits.filter(v=>v.dlrId===id).slice(-3);
+  if(dlrVisits.length){
+    const last = dlrVisits[dlrVisits.length-1];
+    // Show last visit info
+    $("last-visit-info").textContent = `Last visit: ${last.date} · Score: ${last.score}/${last.maxScore} (${last.pct}%)`;
+  } else {
+    $("last-visit-info").textContent = "No previous visits recorded";
+  }
+}
+
+function loadCarryover(dlrId){
+  const co = $("v-carryover");
+  const openICS = db.ics.filter(i=>i.dlrId===dlrId && i.status!=="Done");
+  if(!openICS.length){co.innerHTML="";return;}
+  const overdue = openICS.filter(i=>{
+    if(!i.byWhen) return false;
+    const p = i.byWhen.match(/(\d{4}-\d{2})/);
+    return p && p[1] < CUR_MONTH;
+  });
+  co.innerHTML=`<div class="co-box">
+    <div class="co-title">⚠ ${openICS.length} open ICS item${openICS.length>1?"s":""} — ${overdue.length} overdue</div>
+    ${openICS.map(i=>`<div class="co-item">
+      <span class="badge ${overdue.includes(i)?"badge-r":"badge-a"}" style="margin-right:6px;">${overdue.includes(i)?"OVERDUE":i.status}</span>
+      <strong>${i.gap}</strong> · Action: ${i.action||"—"} · Due: ${i.byWhen||"—"}
+    </div>`).join("")}
+  </div>`;
+}
+
+// ═══════════════════════════════
+// STEP 1 — KPIs
+// ═══════════════════════════════
+function buildKPITable(){
+  const tbody = $("kpi-tbody");
+  tbody.innerHTML = KPI_DEFS.map(k=>`
+    <tr>
+      <td><strong>${k.label}</strong><br><span style="font-size:10px;color:var(--ink3);">${k.unit}</span></td>
+      <td><input class="kpi-input" id="kt-${k.key}" type="number" min="0" placeholder="0" oninput="calcKpiRow('${k.key}')"></td>
+      <td><input class="kpi-input" id="ka-${k.key}" type="number" min="0" placeholder="0" oninput="calcKpiRow('${k.key}')"></td>
+      <td id="kach-${k.key}" style="text-align:center;font-weight:700;">—</td>
+      <td id="kavg-${k.key}" style="text-align:center;font-size:11px;color:var(--ink3);">${getYTDAvg(k.key)}</td>
+      <td id="klm-${k.key}" style="text-align:center;font-size:11px;color:var(--ink3);">${getLastMonthVal(k.key)}</td>
+    </tr>`).join("");
+}
+
+function getYTDAvg(kpiKey){
+  if(!state.selectedDlr) return "—";
+  const thisYear = CUR_MONTH.slice(0,4);
+  const visits = db.visits.filter(v=>v.dlrId===state.selectedDlr.id && v.date.startsWith(thisYear) && v.kpi && v.kpi[kpiKey]?.actual);
+  if(!visits.length) return "—";
+  const avg = visits.reduce((a,v)=>a+(v.kpi[kpiKey].actual||0),0)/visits.length;
+  return avg>999?"৳"+Math.round(avg/1000)+"K":Math.round(avg).toLocaleString();
+}
+
+function getLastMonthVal(kpiKey){
+  if(!state.selectedDlr) return "—";
+  const d = new Date(); d.setMonth(d.getMonth()-1);
+  const lm = d.toISOString().slice(0,7);
+  const visits = db.visits.filter(v=>v.dlrId===state.selectedDlr.id && v.date.startsWith(lm) && v.kpi && v.kpi[kpiKey]?.actual);
+  if(!visits.length) return "—";
+  const val = visits[visits.length-1].kpi[kpiKey].actual;
+  return val>999?"৳"+Math.round(val/1000)+"K":val.toLocaleString();
+}
+
+function calcKpiRow(key){
+  const t = parseFloat($("kt-"+key).value)||0;
+  const a = parseFloat($("ka-"+key).value)||0;
+  state.kpiTargets[key] = t;
+  state.kpiActuals[key] = a;
+  const cell = $("kach-"+key);
+  if(!t||!a){cell.textContent="—";cell.className="";return;}
+  const pct = Math.round((a/t)*100);
+  cell.textContent = pct+"%";
+  cell.className = pct>=100?"kpi-tbl ach-good":pct>=80?"kpi-tbl ach-mid":"kpi-tbl ach-bad";
+}
+
+// ═══════════════════════════════
+// STEP 2 — CHECKLIST
+// ═══════════════════════════════
+function buildChecklist(){
+  const body = $("chk-body");
+  body.innerHTML = CHECKLIST.map((cat,ci)=>{
+    const subsHtml = cat.subs.map((sub,si)=>{
+      const itemsHtml = sub.items.map((item,ii)=>{
+        const k = `${ci}_${si}_${ii}`;
+        const lastChecked = getLastCheckedDate(ci,si,ii);
+        const age = lastChecked ? getDaysAgo(lastChecked) : null;
+        const ageColor = age===null?"#ccc":age<=30?"var(--green)":age<=90?"var(--amber)":"var(--red)";
+        const ageTip = age===null?"Never checked":age===0?"Checked today":age<=30?`Checked ${age}d ago`:age<=90?`Checked ${age}d ago — review soon`:`Checked ${age}d ago — needs attention`;
+        return `<label class="chk-item">
+          <input type="checkbox" data-k="${k}" onchange="onChk()" ${state.vCS[k]?"checked":""}>
+          <span style="flex:1;">${item}</span>
+          <span style="font-size:9px;color:${ageColor};font-family:var(--mono);white-space:nowrap;" title="${ageTip}">${age===null?"—":age===0?"today":age+"d"}</span>
+        </label>`;
+      }).join("");
+      return `<div class="chk-subcat">
+        <div class="chk-subcat-title">${sub.sub}</div>
+        ${itemsHtml}
+      </div>`;
+    }).join("");
+    const catChecked = getCatScore(ci);
+    const catTotal = cat.subs.reduce((a,s)=>a+s.items.length,0);
+    const catPct = catTotal?Math.round((catChecked/catTotal)*100):0;
+    const bg = catChecked===0?"var(--sur3)":catPct>=75?"var(--green-l)":catPct>=50?"var(--amber-l)":"var(--red-l)";
+    const fg = catChecked===0?"var(--ink3)":catPct>=75?"var(--green)":catPct>=50?"var(--amber)":"var(--red)";
+    return `<div class="chk-cat">
+      <div class="chk-cat-title">
+        <span>${cat.cat}</span>
+        <span class="cat-score" id="catscore-${ci}" style="background:${bg};color:${fg};">${catChecked}/${catTotal}</span>
+      </div>
+      ${subsHtml}
+    </div>`;
+  }).join("");
+  updateScoreLabel();
+}
+
+function getLastCheckedDate(ci,si,ii){
+  if(!state.selectedDlr) return null;
+  const dlrVisits = db.visits.filter(v=>v.dlrId===state.selectedDlr.id && v.checklist);
+  for(let i=dlrVisits.length-1;i>=0;i--){
+    const v = dlrVisits[i];
+    const entry = v.checklist.find(c=>c.ci===ci&&c.si===si&&c.ii===ii&&c.checked);
+    if(entry) return v.date;
+  }
+  return null;
+}
+
+function getDaysAgo(dateStr){
+  const d = new Date(dateStr);
+  const now = new Date(TODAY);
+  return Math.floor((now-d)/(1000*60*60*24));
+}
+
+function getCatScore(ci){
+  let n=0;
+  CHECKLIST[ci].subs.forEach((s,si)=>s.items.forEach((_,ii)=>{if(state.vCS[`${ci}_${si}_${ii}`])n++;}));
+  return n;
+}
+
+function onChk(){
+  document.querySelectorAll("#chk-body input[type=checkbox]").forEach(cb=>{state.vCS[cb.dataset.k]=cb.checked;});
+  CHECKLIST.forEach((_,ci)=>{
+    const total = CHECKLIST[ci].subs.reduce((a,s)=>a+s.items.length,0);
+    const checked = getCatScore(ci);
+    const pct = total?Math.round((checked/total)*100):0;
+    const el = $("catscore-"+ci); if(!el) return;
+    el.textContent = `${checked}/${total}`;
+    el.style.background = checked===0?"var(--sur3)":pct>=75?"var(--green-l)":pct>=50?"var(--amber-l)":"var(--red-l)";
+    el.style.color = checked===0?"var(--ink3)":pct>=75?"var(--green)":pct>=50?"var(--amber)":"var(--red)";
+  });
+  updateScoreLabel();
+}
+
+function updateScoreLabel(){
+  let tot=0;
+  CHECKLIST.forEach((_,ci)=>CHECKLIST[ci].subs.forEach((s,si)=>s.items.forEach((_,ii)=>{if(state.vCS[`${ci}_${si}_${ii}`])tot++;})));
+  $("score-lbl").textContent = tot?`${tot}/${MAX_SCORE} points checked (${Math.round(tot/MAX_SCORE*100)}%)`:"Tick only what you actually observed this visit";
+}
+
+// ═══════════════════════════════
+// STEP 3 — FINDINGS
+// ═══════════════════════════════
+function addFinding(){
+  state.vFinds.push({id:Date.now()+Math.random(),gap:"",rootCause:"",action:"",byWhen:"",priority:"top",status:"Open"});
+  renderFindings();
+}
+function remFinding(fid){
+  state.vFinds = state.vFinds.filter(f=>f.id!==fid);
+  renderFindings();
+}
+function renderFindings(){
+  const w=$("v-finds"), e=$("v-finds-empty");
+  e.style.display = state.vFinds.length?"none":"block";
+  w.innerHTML = state.vFinds.map((f,i)=>`
+    <div class="find-item">
+      <div class="find-hd">
+        <span class="find-num">Finding #${i+1}</span>
+        <div style="display:flex;gap:7px;align-items:center;">
+          <select style="font-size:11px;padding:3px 7px;border:1px solid var(--sur4);border-radius:var(--r);background:#fff;" onchange="state.vFinds[${i}].priority=this.value">
+            <option value="top" ${f.priority==="top"?"selected":""}>🔴 Top priority</option>
+            <option value="2nd" ${f.priority==="2nd"?"selected":""}>🟡 2nd priority</option>
+          </select>
+          <button class="btn btn-ghost btn-sm" onclick="remFinding(${f.id})" style="color:var(--red);">✕</button>
+        </div>
+      </div>
+      <div class="find-grid">
+        <div class="find-box" style="background:var(--red-l);">
+          <div class="find-lbl">Problem / Gap</div>
+          <textarea class="fta" style="min-height:52px;border-color:transparent;background:transparent;" oninput="state.vFinds[${i}].gap=this.value" placeholder="Describe what you observed...">${f.gap}</textarea>
+        </div>
+        <div class="find-box" style="background:var(--amber-l);">
+          <div class="find-lbl">Root Cause</div>
+          <textarea class="fta" style="min-height:52px;border-color:transparent;background:transparent;" oninput="state.vFinds[${i}].rootCause=this.value" placeholder="Why did this happen?">${f.rootCause}</textarea>
+        </div>
+        <div class="find-box" style="background:var(--green-l);">
+          <div class="find-lbl">Recommended Action</div>
+          <textarea class="fta" style="min-height:52px;border-color:transparent;background:transparent;" oninput="state.vFinds[${i}].action=this.value" placeholder="What needs to be done...">${f.action}</textarea>
+        </div>
+        <div class="find-box" style="background:var(--blue-l);">
+          <div class="find-lbl">Complete By (YYYY-MM)</div>
+          <input class="fi" style="border-color:transparent;background:transparent;" oninput="state.vFinds[${i}].byWhen=this.value" value="${f.byWhen}" placeholder="e.g. 2026-09">
+        </div>
+      </div>
+    </div>`).join("");
+}
+
+// ═══════════════════════════════
+// STEP 4 — REVIEW
+// ═══════════════════════════════
+function buildReview(){
+  let tot=0;
+  CHECKLIST.forEach((_,ci)=>CHECKLIST[ci].subs.forEach((s,si)=>s.items.forEach((_,ii)=>{if(state.vCS[`${ci}_${si}_${ii}`])tot++;})));
+  const pct = tot?Math.round(tot/MAX_SCORE*100):0;
+  const scoreColor = pct>=75?"var(--green)":pct>=50?"var(--amber)":"var(--red)";
+  const dlr = state.selectedDlr||{};
+  $("review-body").innerHTML=`
+    <div class="review-kpi">
+      <div class="review-kpi-box"><div class="review-kpi-l">Dealer</div><div class="review-kpi-v" style="font-size:12px;">${dlr.name||"—"}</div></div>
+      <div class="review-kpi-box"><div class="review-kpi-l">Visit Date</div><div class="review-kpi-v" style="font-size:13px;">${state.visitDate||"—"}</div></div>
+      <div class="review-kpi-box"><div class="review-kpi-l">Checklist Score</div><div class="review-kpi-v" style="color:${scoreColor};">${tot?pct+"%":"—"}</div></div>
+      <div class="review-kpi-box"><div class="review-kpi-l">Findings</div><div class="review-kpi-v">${state.vFinds.filter(f=>f.gap.trim()).length}</div></div>
+    </div>
+    ${state.vFinds.filter(f=>f.gap.trim()).length?`<div style="font-size:12px;">
+      ${state.vFinds.filter(f=>f.gap.trim()).map((f,i)=>`
+        <div style="padding:5px 0;border-bottom:1px solid var(--sur3);">
+          <span class="badge ${f.priority==="top"?"badge-r":"badge-a"}" style="margin-right:6px;">Finding #${i+1}</span>
+          ${f.gap} <span style="color:var(--ink3);font-size:10px;">· Due: ${f.byWhen||"not set"}</span>
+        </div>`).join("")}
+    </div>`:""}`;
+}
+
+// ═══════════════════════════════
+// SUBMIT
+// ═══════════════════════════════
+function submitVisit(){
+  if(!state.selectedDlr){toast("Please select a dealer","err");return;}
+  if(!state.visitDate){toast("Please enter visit date","err");return;}
+
+  let tot=0, chkRows=[];
+  CHECKLIST.forEach((cat,ci)=>cat.subs.forEach((sub,si)=>sub.items.forEach((item,ii)=>{
+    const c=!!state.vCS[`${ci}_${si}_${ii}`];
+    if(c) tot++;
+    chkRows.push({ci,si,ii,cat:cat.cat,sub:sub.sub,item,checked:c});
+  })));
+
+  const pct = tot?Math.round(tot/MAX_SCORE*100):0;
+  const visitId = "V_"+AIC_ID+"_"+Date.now();
+
+  // Build KPI object
+  const kpiData = {};
+  KPI_DEFS.forEach(k=>{
+    const t=state.kpiTargets[k.key]||0, a=state.kpiActuals[k.key]||0;
+    kpiData[k.key]={target:t,actual:a,ach:t?Math.round(a/t*100):null};
+  });
+
+  // Save to db
+  const visitRecord = {
+    visitId, dlrId:state.selectedDlr.id, dlrName:state.selectedDlr.name,
+    district:state.selectedDlr.district, thana:state.selectedDlr.thana,
+    date:state.visitDate, score:tot, maxScore:MAX_SCORE, pct,
+    kpi:kpiData, bizComment:$("v-biz").value, remarks:$("v-rem").value,
+    findings:state.vFinds.filter(f=>f.gap.trim()).map(f=>({...f})),
+    checklist:chkRows.filter(c=>c.checked),
+    submittedAt:new Date().toISOString()
+  };
+  db.visits.push(visitRecord);
+
+  // Add findings to ICS
+  state.vFinds.filter(f=>f.gap.trim()).forEach(f=>{
+    db.ics.push({
+      icsId:"ICS_"+Date.now()+"_"+Math.random().toString(36).slice(2),
+      visitId, dlrId:state.selectedDlr.id, dlrName:state.selectedDlr.name,
+      date:state.visitDate, priority:f.priority,
+      gap:f.gap, action:f.action, byWhen:f.byWhen,
+      status:"Open", pic:"", rootCause:f.rootCause
+    });
+  });
+
+  saveDB();
+
+  // Build print page
+  buildPrintPage(visitRecord, pct);
+
+  // Show success
+  $("success-msg").textContent = `${state.selectedDlr.name} · ${state.visitDate} · Score: ${tot}/${MAX_SCORE} (${pct}%) · ${visitRecord.findings.length} finding(s)`;
+  showSuccessPage();
+  toast("Visit submitted and saved!","ok");
+}
+
+function showSuccessPage(){
+  document.querySelectorAll(".vstep-pg").forEach(p=>p.classList.remove("active"));
+  $("vstep-success").classList.add("active");
+}
+
+function saveDB(){
+  localStorage.setItem(STORE_KEY, JSON.stringify(db));
+}
+
+// ═══════════════════════════════
+// PRINT PAGE
+// ═══════════════════════════════
+function buildPrintPage(v, pct){
+  const scoreColor = pct>=75?"#0F6B32":pct>=50?"#7A4900":"#CC0000";
+  const scoreBg    = pct>=75?"#EDFAF3":pct>=50?"#FFF7E6":"#FFF0F0";
+
+  // Checked items grouped by category
+  const chkByCat = {};
+  (v.checklist||[]).forEach(c=>{
+    if(!chkByCat[c.cat]) chkByCat[c.cat]=[];
+    chkByCat[c.cat].push(c.item);
+  });
+
+  const findHtml = (v.findings||[]).map((f,i)=>`
+    <div class="print-finding">
+      <div class="print-finding-num">Finding ${i+1} · ${f.priority==="top"?"🔴 Top Priority":"🟡 2nd Priority"}</div>
+      <div class="print-finding-grid">
+        <div class="print-fbox" style="background:#FFF0F0;"><div class="print-fbox-lbl">Problem / Gap</div><div class="print-fbox-val">${f.gap||"—"}</div></div>
+        <div class="print-fbox" style="background:#FFF7E6;"><div class="print-fbox-lbl">Root Cause</div><div class="print-fbox-val">${f.rootCause||"—"}</div></div>
+        <div class="print-fbox" style="background:#EDFAF3;"><div class="print-fbox-lbl">Recommended Action</div><div class="print-fbox-val">${f.action||"—"}</div></div>
+        <div class="print-fbox" style="background:#EBF1FF;"><div class="print-fbox-lbl">Complete By</div><div class="print-fbox-val" style="font-weight:700;">${f.byWhen||"—"}</div></div>
+      </div>
+    </div>`).join("");
+
+  const chkHtml = Object.entries(chkByCat).map(([cat,items])=>`
+    <div class="print-chk-cat">
+      <div class="print-chk-cat-title">${cat}</div>
+      ${items.map(item=>`<div class="print-chk-item">${item}</div>`).join("")}
+    </div>`).join("");
+
+  const kpiHtml = KPI_DEFS.map(k=>{
+    const d = v.kpi?.[k.key]||{};
+    const achColor = d.ach>=100?"#0F6B32":d.ach>=80?"#7A4900":"#CC0000";
+    return `<div class="print-kpi-box">
+      <div class="print-kpi-lbl">${k.label}</div>
+      <div class="print-kpi-val">${d.actual?d.actual.toLocaleString():"—"}</div>
+      ${d.ach!==null&&d.ach!==undefined?`<div style="font-size:9px;font-weight:700;color:${achColor};">${d.ach}%</div>`:""}
+    </div>`;
+  }).join("");
+
+  $("pg-print").innerHTML=`
+    <div class="print-header">
+      <div>
+        <div class="print-logo">🏍 BHL HONDA — Dealer Visit Report</div>
+        <div class="print-sub">Acknowledgement Copy · Confidential — Internal Use Only</div>
+      </div>
+      <div style="text-align:right;font-size:9px;color:#888;">
+        Visit ID: ${v.visitId}<br>
+        Printed: ${new Date().toLocaleString()}
+      </div>
+    </div>
+
+    <div class="print-meta">
+      <div class="print-meta-box"><div class="print-meta-lbl">Dealer Name</div><div class="print-meta-val">${v.dlrName}</div></div>
+      <div class="print-meta-box"><div class="print-meta-lbl">Dealer Code</div><div class="print-meta-val">${v.dlrId} · SAP: ${state.selectedDlr?.sap||"—"}</div></div>
+      <div class="print-meta-box"><div class="print-meta-lbl">District / Thana</div><div class="print-meta-val">${v.district} · ${v.thana}</div></div>
+      <div class="print-meta-box"><div class="print-meta-lbl">Visit Date</div><div class="print-meta-val">${v.date}</div></div>
+      <div class="print-meta-box"><div class="print-meta-lbl">AIC Name / ID</div><div class="print-meta-val">${AIC_NAME} · ${AIC_ID}</div></div>
+      <div class="print-meta-box"><div class="print-meta-lbl">Division / Grade</div><div class="print-meta-val">${DIVISION} · ${AIC_GRADE}</div></div>
+    </div>
+
+    <div class="print-sec">Business KPIs — Current Month</div>
+    <div class="print-kpi-row">${kpiHtml}</div>
+    ${v.bizComment?`<div class="print-remarks-box" style="margin-bottom:8px;">${v.bizComment}</div>`:""}
+
+    <div class="print-sec">
+      CSI Quality Check &nbsp;·&nbsp;
+      <span class="print-score-pill" style="background:${scoreBg};color:${scoreColor};">
+        ${v.score} / ${v.maxScore} checked &nbsp; ${pct}%
+      </span>
+    </div>
+    ${chkHtml?`<div class="print-chklist">${chkHtml}</div>`:`<div style="font-size:10px;color:#aaa;font-style:italic;">No check points recorded this visit.</div>`}
+
+    <div class="print-sec">Findings & Required Actions (${(v.findings||[]).length})</div>
+    ${findHtml||`<div style="font-size:10px;color:#aaa;font-style:italic;">No findings recorded this visit.</div>`}
+
+    ${v.remarks?`<div class="print-sec">Additional Remarks</div><div class="print-remarks-box">${v.remarks}</div>`:""}
+
+    <div class="print-sig">
+      <div class="print-sig-box">
+        <div class="print-sig-space"></div>
+        <div class="print-sig-name">${AIC_NAME}</div>
+        <div class="print-sig-role">AIC / BHL Representative · ${AIC_ID} · ${DIVISION} Division</div>
+      </div>
+      <div class="print-sig-box">
+        <div class="print-sig-space"></div>
+        <div class="print-sig-name">Dealer Authorised Signatory</div>
+        <div class="print-sig-role">${v.dlrName} · Name, Designation & Stamp</div>
+      </div>
+    </div>
+
+    <div class="print-footer">
+      Bangladesh Honda Private Limited · DVR System v3.0 · ${v.dlrName} · ${v.date} · This document is an official BHL dealer visit record.
+    </div>`;
+}
+
+// ═══════════════════════════════
+// DASHBOARD
+// ═══════════════════════════════
+function buildDashboard(){
+  const wrap = $("dash-body");
+  if(!db.visits.length){
+    wrap.innerHTML=`<div style="font-size:13px;color:var(--ink3);font-style:italic;padding:20px 0;">No visits submitted yet. Submit your first visit to see the dashboard.</div>`;
+    return;
+  }
+  // Group by dealer
+  const dlrMap = {};
+  db.visits.forEach(v=>{
+    if(!dlrMap[v.dlrId]) dlrMap[v.dlrId]={name:v.dlrName,visits:[]};
+    dlrMap[v.dlrId].visits.push(v);
+  });
+
+  wrap.innerHTML=`<div class="dlr-grid">${Object.entries(dlrMap).map(([did,d])=>{
+    const sorted = d.visits.sort((a,b)=>a.date.localeCompare(b.date));
+    const last = sorted[sorted.length-1];
+    const prev = sorted.length>=2?sorted[sorted.length-2]:null;
+    const pct = last.pct||0;
+    const change = prev?(pct-(prev.pct||0)):null;
+    const bc = pct>=75?"var(--green)":pct>=50?"var(--amber)":"var(--red)";
+    const openICS = db.ics.filter(i=>i.dlrId===did&&i.status!=="Done").length;
+    return `<div class="dlr-card">
+      <div class="dlr-card-name">${d.name}</div>
+      <div class="dlr-card-meta">${did} · ${last.district}</div>
+      <div class="dlr-card-meta" style="margin-top:2px;">Last visit: ${last.date}</div>
+      <div style="display:flex;justify-content:space-between;align-items:flex-end;">
+        <div class="dlr-card-score" style="color:${bc};">${pct}%</div>
+        <div style="text-align:right;">
+          ${change!==null?`<div style="font-size:11px;color:${change>=0?"var(--green)":"var(--red)"};">${change>=0?"+":""}${change}%</div>`:""}
+          ${openICS?`<span class="badge badge-r">${openICS} open ICS</span>`:`<span class="badge badge-g">ICS clear</span>`}
+        </div>
+      </div>
+      <div class="prog-w"><div class="prog-f" style="width:${pct}%;background:${bc};"></div></div>
+      <div style="font-size:10px;color:var(--ink3);margin-top:5px;">${last.score}/${last.maxScore} pts · ${last.findings?.length||0} finding(s) · ${d.visits.length} visit(s) total</div>
+    </div>`;
+  }).join("")}</div>`;
+}
+
+// ═══════════════════════════════
+// ICS TRACKER
+// ═══════════════════════════════
+function buildICS(){
+  const wrap = $("ics-body");
+  const filterDlr = $("ics-dlr-filter").value;
+  const filterStatus = $("ics-status-filter").value;
+
+  let items = [...db.ics];
+  if(filterDlr) items = items.filter(i=>i.dlrId===filterDlr);
+  if(filterStatus) items = items.filter(i=>i.status===filterStatus);
+  items.sort((a,b)=>a.byWhen?a.byWhen.localeCompare(b.byWhen||""):1);
+
+  if(!items.length){
+    wrap.innerHTML=`<div style="font-size:13px;color:var(--ink3);font-style:italic;padding:16px 0;">No ICS items match your filter.</div>`;
+    return;
+  }
+
+  wrap.innerHTML = items.map((item,i)=>{
+    const overdue = item.byWhen && item.byWhen < CUR_MONTH && item.status!=="Done";
+    const statusColors = {Open:"badge-r","In Progress":"badge-a",Done:"badge-g"};
+    return `<div class="ics-item">
+      <div class="ics-hd">
+        <div>
+          <span class="badge ${statusColors[item.status]||"badge-gray"}" style="margin-right:6px;">${item.status}</span>
+          ${overdue?`<span class="badge badge-r">OVERDUE</span>`:""}
+          <span class="badge ${item.priority==="top"?"badge-r":"badge-a"}" style="margin-left:4px;">${item.priority==="top"?"Top":"2nd"}</span>
+        </div>
+        <div style="display:flex;gap:6px;">
+          <select class="fi" style="padding:4px 8px;font-size:11px;width:auto;" onchange="updateICSStatus('${item.icsId}',this.value)">
+            <option ${item.status==="Open"?"selected":""}>Open</option>
+            <option ${item.status==="In Progress"?"selected":""}>In Progress</option>
+            <option ${item.status==="Done"?"selected":""}>Done</option>
+          </select>
+        </div>
+      </div>
+      <div class="ics-gap">${item.gap}</div>
+      <div class="ics-meta" style="margin-top:5px;">
+        🏢 ${item.dlrName} &nbsp;·&nbsp; 📅 Visit: ${item.date} &nbsp;·&nbsp; ⏰ Due: ${item.byWhen||"not set"}
+      </div>
+      ${item.action?`<div class="ics-meta" style="margin-top:3px;">→ Action: ${item.action}</div>`:""}
+      <div class="field" style="margin-top:8px;">
+        <label>PIC (Person in charge)</label>
+        <input class="fi" style="font-size:12px;" value="${item.pic||""}" onchange="updateICSPIC('${item.icsId}',this.value)" placeholder="Enter name...">
+      </div>
+    </div>`;
+  }).join("");
+}
+
+function updateICSStatus(icsId, status){
+  const item = db.ics.find(i=>i.icsId===icsId);
+  if(item){
+    item.status=status;
+    if(status==="Done") item.closedAt=TODAY;
+    saveDB();
+    toast("ICS status updated","ok");
+  }
+}
+
+function updateICSPIC(icsId, pic){
+  const item = db.ics.find(i=>i.icsId===icsId);
+  if(item){item.pic=pic; saveDB();}
+}
+
+function buildICSDlrFilter(){
+  const sel=$("ics-dlr-filter");
+  sel.innerHTML=`<option value="">All dealers</option>`;
+  DEALERS.forEach(d=>{const o=document.createElement("option");o.value=d.id;o.textContent=d.name;sel.appendChild(o);});
+}
+
+// ═══════════════════════════════
+// HISTORY
+// ═══════════════════════════════
+function buildHistory(){
+  const wrap=$("hist-body");
+  const dlrFilter=$("hist-dlr-filter").value;
+  let visits=[...db.visits].reverse();
+  if(dlrFilter) visits=visits.filter(v=>v.dlrId===dlrFilter);
+  if(!visits.length){wrap.innerHTML=`<div style="font-size:13px;color:var(--ink3);font-style:italic;">No visits yet.</div>`;return;}
+  wrap.innerHTML=visits.map(v=>{
+    const bc=v.pct>=75?"var(--green)":v.pct>=50?"var(--amber)":"var(--red)";
+    return `<div class="hist-card">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;">
+        <div>
+          <div style="font-size:13px;font-weight:600;">${v.dlrName} — ${v.date}</div>
+          <div style="font-size:11px;color:var(--ink3);font-family:var(--mono);">${v.findings?.length||0} finding(s) · ${v.score} pts checked · ${v.visitId}</div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-size:22px;font-weight:300;color:${bc};">${v.pct}%</div>
+          <div style="font-size:10px;color:var(--ink3);">${v.score}/${v.maxScore}</div>
+        </div>
+      </div>
+      <div style="background:var(--sur3);border-radius:3px;height:4px;overflow:hidden;margin-bottom:8px;">
+        <div style="height:4px;border-radius:3px;width:${v.pct}%;background:${bc};"></div>
+      </div>
+      ${v.findings?.length?`<div>${v.findings.map(f=>`
+        <div style="font-size:12px;padding:3px 0;border-bottom:1px solid var(--sur2);">
+          <span style="color:var(--red);">▸</span> <strong>${f.gap}</strong>
+          ${f.action?` — <em style="color:var(--ink3);">${f.action}</em>`:""}
+          <span style="font-size:10px;color:var(--ink3);"> · ${f.byWhen||"no date"}</span>
+        </div>`).join("")}</div>`:""}
+    </div>`;
+  }).join("");
+}
+
+function buildHistDlrFilter(){
+  const sel=$("hist-dlr-filter");
+  sel.innerHTML=`<option value="">All dealers</option>`;
+  DEALERS.forEach(d=>{const o=document.createElement("option");o.value=d.id;o.textContent=d.name;sel.appendChild(o);});
+}
+
+// ═══════════════════════════════
+// EXCEL EXPORT
+// ═══════════════════════════════
+function buildExport(){
+  const wrap=$("export-body");
+  const totalVisits=db.visits.length;
+  const totalICS=db.ics.length;
+  const openICS=db.ics.filter(i=>i.status!=="Done").length;
+  const totalFindings=db.visits.reduce((a,v)=>a+(v.findings?.length||0),0);
+  wrap.innerHTML=`
+    <div style="background:var(--green-l);border:1px solid var(--green-m);border-radius:var(--rl);padding:14px 16px;margin-bottom:16px;">
+      <div style="font-size:13px;font-weight:600;color:var(--green);margin-bottom:8px;">📊 Data ready to export</div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;">
+        ${[["Total Visits",totalVisits],["Total Findings",totalFindings],["ICS Items",totalICS],["Open ICS",openICS]].map(([l,v])=>`
+          <div style="background:#fff;border:1px solid var(--green-m);border-radius:var(--r);padding:8px 10px;text-align:center;">
+            <div style="font-size:10px;color:var(--ink3);">${l}</div>
+            <div style="font-size:20px;font-weight:500;color:var(--green);">${v}</div>
+          </div>`).join("")}
+      </div>
+    </div>
+    <div class="chk-note" style="margin-bottom:16px;">
+      The Excel file contains 5 tabs: <strong>Visits, KPIs, Checklist, Findings/ICS, Dashboard</strong>.<br>
+      Send this file to your manager when requested. All data is from this device only.
+    </div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;">
+      <button class="btn btn-green btn-lg" onclick="downloadExcel()">⬇ Download Excel (.xlsx) — 6 tabs</button>
+      <button class="btn btn-outline" onclick="downloadAllCSV()">⬇ CSV fallback (offline)</button>
+    </div>
+    <div style="margin-top:12px;font-size:11px;color:var(--ink3);">
+      Last export: <span id="last-export-time">${localStorage.getItem(STORE_KEY+"_lastexport")||"Never"}</span>
+    </div>`;
+}
+
+function downloadExcel(){
+  // Load SheetJS from CDN then build proper multi-tab .xlsx
+  const now = new Date().toLocaleString();
+  localStorage.setItem(STORE_KEY+"_lastexport", now);
+
+  if(typeof XLSX === "undefined"){
+    const script = document.createElement("script");
+    script.src = "https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js";
+    script.onload = ()=>{ buildAndDownloadXLSX(now); };
+    script.onerror = ()=>{ toast("No internet — using CSV fallback",""); downloadAllCSV(); };
+    document.head.appendChild(script);
+  } else {
+    buildAndDownloadXLSX(now);
+  }
+}
+
+function buildAndDownloadXLSX(now){
+  const wb = XLSX.utils.book_new();
+
+  // ── TAB 1: Visits ──────────────────────────────────
+  const visitData = [
+    ["Visit ID","Dealer ID","Dealer Name","District","Thana","Visit Date",
+     "Score","Max Score","Score %","Findings","Business Comment","Remarks","Submitted At"],
+    ...db.visits.map(v=>[
+      v.visitId,v.dlrId,v.dlrName,v.district||"",v.thana||"",v.date,
+      v.score,v.maxScore,v.pct?v.pct+"%":"",v.findings?.length||0,
+      v.bizComment||"",v.remarks||"",v.submittedAt||""
+    ])
+  ];
+  const ws1 = XLSX.utils.aoa_to_sheet(visitData);
+  ws1["!cols"] = [20,14,25,14,16,12,8,10,10,10,40,40,22].map(w=>({wch:w}));
+  XLSX.utils.book_append_sheet(wb, ws1, "Visits");
+
+  // ── TAB 2: KPIs ────────────────────────────────────
+  const kpiData = [
+    ["Visit ID","Dealer ID","Dealer Name","Visit Date",
+     ...KPI_DEFS.flatMap(k=>[k.label+" Target", k.label+" Actual", k.label+" Ach%"])],
+    ...db.visits.map(v=>[
+      v.visitId,v.dlrId,v.dlrName,v.date,
+      ...KPI_DEFS.flatMap(k=>[
+        v.kpi?.[k.key]?.target||"",
+        v.kpi?.[k.key]?.actual||"",
+        v.kpi?.[k.key]?.ach!=null ? v.kpi[k.key].ach+"%" : ""
+      ])
+    ])
+  ];
+  const ws2 = XLSX.utils.aoa_to_sheet(kpiData);
+  ws2["!cols"] = [20,14,25,12,...KPI_DEFS.flatMap(()=>[12,12,10])].map(w=>({wch:w}));
+  XLSX.utils.book_append_sheet(wb, ws2, "KPIs");
+
+  // ── TAB 3: Checklist ───────────────────────────────
+  const chkData = [
+    ["Visit ID","Dealer ID","Dealer Name","Visit Date","Category","Sub Category","Check Point"],
+    ...db.visits.flatMap(v=>(v.checklist||[]).map(c=>[
+      v.visitId,v.dlrId,v.dlrName,v.date,c.cat||"",c.sub||"",c.item||""
+    ]))
+  ];
+  const ws3 = XLSX.utils.aoa_to_sheet(chkData);
+  ws3["!cols"] = [20,14,25,12,22,30,60].map(w=>({wch:w}));
+  XLSX.utils.book_append_sheet(wb, ws3, "Checklist");
+
+  // ── TAB 4: Findings ────────────────────────────────
+  const findData = [
+    ["Visit ID","Dealer ID","Dealer Name","Visit Date","Priority",
+     "Gap / Problem Observed","Root Cause","Recommended Action","By When"],
+    ...db.visits.flatMap(v=>(v.findings||[]).map(f=>[
+      v.visitId,v.dlrId,v.dlrName,v.date,f.priority||"",
+      f.gap||"",f.rootCause||"",f.action||"",f.byWhen||""
+    ]))
+  ];
+  const ws4 = XLSX.utils.aoa_to_sheet(findData);
+  ws4["!cols"] = [20,14,25,12,10,40,30,40,12].map(w=>({wch:w}));
+  XLSX.utils.book_append_sheet(wb, ws4, "Findings");
+
+  // ── TAB 5: ICS ─────────────────────────────────────
+  const icsData = [
+    ["ICS ID","Visit ID","Dealer ID","Dealer Name","Visit Date","Priority",
+     "Gap / Findings","Root Cause","Next Action","By When","Status","PIC","Closed At"],
+    ...db.ics.map(i=>[
+      i.icsId,i.visitId,i.dlrId,i.dlrName,i.date,i.priority||"",
+      i.gap||"",i.rootCause||"",i.action||"",i.byWhen||"",
+      i.status||"Open",i.pic||"",i.closedAt||""
+    ])
+  ];
+  const ws5 = XLSX.utils.aoa_to_sheet(icsData);
+  ws5["!cols"] = [22,20,14,25,12,10,40,30,40,12,14,20,12].map(w=>({wch:w}));
+  XLSX.utils.book_append_sheet(wb, ws5, "ICS");
+
+  // ── TAB 6: Dashboard ───────────────────────────────
+  const dlrMap={};
+  db.visits.forEach(v=>{
+    if(!dlrMap[v.dlrId]) dlrMap[v.dlrId]={name:v.dlrName,district:v.district||"",visits:[]};
+    dlrMap[v.dlrId].visits.push(v);
+  });
+  const dashData = [
+    ["Dealer ID","Dealer Name","District","Total Visits","Last Visit Date",
+     "Last Score %","Prev Score %","Change","Open ICS","Overdue ICS","Status"],
+    ...Object.entries(dlrMap).map(([did,d])=>{
+      const sorted = d.visits.sort((a,b)=>a.date.localeCompare(b.date));
+      const last = sorted[sorted.length-1];
+      const prev = sorted.length>=2 ? sorted[sorted.length-2] : null;
+      const change = prev && last.pct!=null && prev.pct!=null ? (last.pct-prev.pct) : "";
+      const openICS = db.ics.filter(i=>i.dlrId===did&&i.status!=="Done").length;
+      const overdue = db.ics.filter(i=>i.dlrId===did&&i.status!=="Done"&&i.byWhen&&i.byWhen<CUR_MONTH).length;
+      const status = last.pct>=75?"Good ≥75%":last.pct>=50?"Watch 50-74%":"At risk <50%";
+      return [did,d.name,d.district,d.visits.length,last.date,
+        last.pct!=null?last.pct+"%":"",prev?prev.pct+"%":"",
+        change!==""?(change>=0?"+"+change+"%":change+"%"):"",
+        openICS,overdue,status];
+    })
+  ];
+  const ws6 = XLSX.utils.aoa_to_sheet(dashData);
+  ws6["!cols"] = [14,25,14,12,14,12,12,10,10,12,16].map(w=>({wch:w}));
+  XLSX.utils.book_append_sheet(wb, ws6, "Dashboard");
+
+  // ── Download ───────────────────────────────────────
+  const fname = `BHL_DVR_${AIC_ID}_${TODAY}.xlsx`;
+  XLSX.writeFile(wb, fname);
+  toast("Excel downloaded — 6 tabs!","ok");
+  if($("last-export-time")) $("last-export-time").textContent=now;
+}
+
+// Offline fallback — download all as separate CSVs
+function downloadAllCSV(){
+  const sheets = [
+    {name:"visits", headers:["Visit ID","Dealer","Date","Score%","Findings"],
+     rows:db.visits.map(v=>[v.visitId,v.dlrName,v.date,v.pct,v.findings?.length||0])},
+    {name:"ics", headers:["ICS ID","Dealer","Date","Gap","Action","By When","Status","PIC"],
+     rows:db.ics.map(i=>[i.icsId,i.dlrName,i.date,i.gap,i.action||"",i.byWhen||"",i.status,i.pic||""])},
+  ];
+  sheets.forEach(s=>{
+    const csv=[s.headers,...s.rows].map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(",")).join("\n");
+    const blob=new Blob(["\uFEFF"+csv],{type:"text/csv;charset=utf-8"});
+    const a=document.createElement("a");
+    a.href=URL.createObjectURL(blob); a.download=`BHL_DVR_${AIC_ID}_${s.name}_${TODAY}.csv`; a.click();
+  });
+}
+
+
+
+// ═══════════════════════════════
+// RESET
+// ═══════════════════════════════
+function resetForm(){
+  state.selectedDlr=null; state.vCS={}; state.vFinds=[];
+  state.kpiTargets={}; state.kpiActuals={}; state.bizComment=""; state.remarks="";
+  state.visitDate=TODAY;
+  showTab("visit");
+}
+
+// ═══════════════════════════════
+// TOAST
+// ═══════════════════════════════
+function toast(msg,type){
+  const t=$("toast"); t.textContent=msg;
+  t.className="toast"+(type==="ok"?" ok":type==="err"?" err":"");
+  t.classList.add("show");
+  setTimeout(()=>t.classList.remove("show"),3000);
+}
+
+</script>
+
+<!-- ═══════ TOPBAR ═══════ -->
+<div class="topbar">
+  <div style="display:flex;align-items:center;">
+    <div class="logo-h">H</div>
+    <span class="logo-text">BHL Honda — DVR System v3</span>
+  </div>
+  <div class="topbar-aic" id="topbar-aic"></div>
+</div>
+<div class="tabs" id="tab-bar"></div>
+
+<div class="wrap">
+
+<!-- ═══════ VISIT FORM ═══════ -->
+<div class="pg active" id="pg-visit">
+  <div style="background:var(--ink);border-radius:var(--rl);padding:2px;margin-bottom:16px;">
+    <div class="tabs" id="vstep-nav" style="padding:6px;gap:2px;background:transparent;"></div>
+  </div>
+
+  <!-- VSTEP 0: DEALER -->
+  <div class="vstep-pg active" id="vstep-0">
+    <div class="sec">
+      <div class="sec-hd"><span class="sec-title">Select dealer</span><span class="sec-sub" id="last-visit-info">Select a dealer to see last visit</span></div>
+      <div class="sec-bd">
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px;" id="dlr-cards"></div>
+        <div class="fg2" style="margin-top:14px;">
+          <div class="field"><label>Date of visit <span class="req">*</span></label>
+            <input class="fi" id="v-date" type="date" value="" oninput="state.visitDate=this.value">
+          </div>
+          <div class="field"><label>AIC / BHL Rep</label>
+            <input class="fi" value="Md. Shahidul Islam" readonly>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="v-carryover"></div>
+    <div style="display:flex;justify-content:flex-end;margin-top:4px;">
+      <button class="btn btn-primary" onclick="goVStep(1)">Next — KPIs →</button>
+    </div>
+  </div>
+
+  <!-- VSTEP 1: KPIs -->
+  <div class="vstep-pg" id="vstep-1">
+    <div class="sec">
+      <div class="sec-hd"><span class="sec-title">Business KPIs</span><span class="sec-sub">Target vs Actual — current month</span></div>
+      <div class="sec-bd">
+        <div style="overflow-x:auto;">
+          <table class="kpi-tbl">
+            <thead><tr>
+              <th>KPI</th>
+              <th>Target</th>
+              <th>Actual</th>
+              <th>Ach %</th>
+              <th>YTD Avg</th>
+              <th>Last Month</th>
+            </tr></thead>
+            <tbody id="kpi-tbody"></tbody>
+          </table>
+        </div>
+        <div class="field" style="margin-top:12px;">
+          <label>Business situation comment</label>
+          <textarea class="fta" id="v-biz" placeholder="Describe overall business situation, trends, key observations..." oninput="state.bizComment=this.value"></textarea>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;justify-content:space-between;margin-top:4px;">
+      <button class="btn btn-ghost" onclick="goVStep(0)">← Back</button>
+      <button class="btn btn-primary" onclick="goVStep(2)">Next — Checklist →</button>
+    </div>
+  </div>
+
+  <!-- VSTEP 2: CHECKLIST -->
+  <div class="vstep-pg" id="vstep-2">
+    <div class="sec">
+      <div class="sec-hd">
+        <span class="sec-title">CSI Quality Checklist — 112 points</span>
+        <span class="sec-sub" id="score-lbl">Tick only what you actually observed</span>
+      </div>
+      <div class="sec-bd">
+        <div class="chk-note">ℹ The small number on the right of each item shows days since last checked at this dealer. Grey = never checked. Green = within 30 days. Amber = 31–90 days. Red = over 90 days.</div>
+        <div id="chk-body"></div>
+      </div>
+    </div>
+    <div style="display:flex;justify-content:space-between;margin-top:4px;">
+      <button class="btn btn-ghost" onclick="goVStep(1)">← Back</button>
+      <button class="btn btn-primary" onclick="goVStep(3)">Next — Findings →</button>
+    </div>
+  </div>
+
+  <!-- VSTEP 3: FINDINGS -->
+  <div class="vstep-pg" id="vstep-3">
+    <div class="sec">
+      <div class="sec-hd">
+        <span class="sec-title">Findings / Gaps</span>
+        <button class="btn btn-outline btn-sm" onclick="addFinding()">+ Add finding</button>
+      </div>
+      <div class="sec-bd">
+        <div id="v-finds"></div>
+        <div id="v-finds-empty" style="font-size:13px;color:var(--ink3);font-style:italic;padding:8px 0;">No findings added yet. Click "+ Add finding" to log a gap or issue.</div>
+      </div>
+    </div>
+    <div style="display:flex;justify-content:space-between;margin-top:4px;">
+      <button class="btn btn-ghost" onclick="goVStep(2)">← Back</button>
+      <button class="btn btn-primary" onclick="goVStep(4)">Next — Review →</button>
+    </div>
+  </div>
+
+  <!-- VSTEP 4: REVIEW -->
+  <div class="vstep-pg" id="vstep-4">
+    <div class="sec"><div class="sec-hd"><span class="sec-title">Review before submitting</span></div><div class="sec-bd" id="review-body"></div></div>
+    <div class="sec">
+      <div class="sec-hd"><span class="sec-title">Additional remarks</span></div>
+      <div class="sec-bd"><textarea class="fta" id="v-rem" placeholder="Any additional observations, recommendations to dealer or head office..." oninput="state.remarks=this.value"></textarea></div>
+    </div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:4px;">
+      <button class="btn btn-primary btn-lg" onclick="submitVisit()"><span id="submit-label">✓ Submit Visit Report</span></button>
+      <button class="btn btn-ghost" onclick="goVStep(3)">← Back</button>
+    </div>
+  </div>
+
+  <!-- SUCCESS -->
+  <div class="vstep-pg" id="vstep-success">
+    <div class="success-wrap">
+      <div class="success-icon">✅</div>
+      <div class="success-title">Visit report submitted!</div>
+      <div class="success-sub" id="success-msg"></div>
+      <div style="background:var(--green-l);border:1px solid var(--green-m);border-radius:var(--rl);padding:12px 16px;margin-bottom:20px;font-size:12px;color:var(--green);max-width:440px;margin:0 auto 20px;">
+        Saved locally. Download Excel from the ⬇ tab to send to your manager.
+      </div>
+      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
+        <button class="btn btn-primary btn-lg no-print" onclick="window.print()">🖨 Print Acknowledgement</button>
+        <button class="btn btn-green no-print" onclick="downloadExcel()">⬇ Download Excel Now</button>
+        <button class="btn btn-outline no-print" onclick="resetForm()">← New Visit</button>
+      </div>
+      <div style="font-size:11px;color:var(--ink3);margin-top:10px;" class="no-print">
+        No printer? In Chrome print dialog → Save as PDF → send on WhatsApp
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ DASHBOARD ═══════ -->
+<div class="pg" id="pg-dash">
+  <div class="sec">
+    <div class="sec-hd"><span class="sec-title">My Dealer Dashboard</span><span class="sec-sub">${DIVISION} Division · Md. Shahidul Islam</span></div>
+    <div class="sec-bd" id="dash-body"><div style="font-size:13px;color:var(--ink3);">Loading...</div></div>
+  </div>
+</div>
+
+<!-- ═══════ ICS ═══════ -->
+<div class="pg" id="pg-ics">
+  <div class="sec">
+    <div class="sec-hd">
+      <span class="sec-title">ICS Tracker — Open Action Items</span>
+      <div style="display:flex;gap:6px;">
+        <select class="fi" id="ics-dlr-filter" onchange="buildICS()" style="font-size:12px;padding:5px 8px;">
+          <option value="">All dealers</option>
+        </select>
+        <select class="fi" id="ics-status-filter" onchange="buildICS()" style="font-size:12px;padding:5px 8px;">
+          <option value="">All status</option>
+          <option value="Open">Open</option>
+          <option value="In Progress">In Progress</option>
+          <option value="Done">Done</option>
+        </select>
+      </div>
+    </div>
+    <div class="sec-bd" id="ics-body"></div>
+  </div>
+</div>
+
+<!-- ═══════ HISTORY ═══════ -->
+<div class="pg" id="pg-history">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+    <span style="font-size:15px;font-weight:500;">Visit History</span>
+    <select class="fi" id="hist-dlr-filter" onchange="buildHistory()" style="max-width:240px;font-size:12px;">
+      <option value="">All dealers</option>
+    </select>
+  </div>
+  <div id="hist-body"></div>
+</div>
+
+<!-- ═══════ EXPORT ═══════ -->
+<div class="pg" id="pg-export">
+  <div class="sec">
+    <div class="sec-hd"><span class="sec-title">Download Excel</span><span class="sec-sub">All your data in one .xls file</span></div>
+    <div class="sec-bd" id="export-body"></div>
+  </div>
+</div>
+
+</div><!-- /wrap -->
+
+<!-- PRINT PAGE -->
+<div id="pg-print" style="display:none;"></div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// Init date field and filters after DOM ready
+document.getElementById("v-date").value = TODAY;
+buildICSDlrFilter();
+buildHistDlrFilter();
+init();
+</script>
+</body>
+</html>
