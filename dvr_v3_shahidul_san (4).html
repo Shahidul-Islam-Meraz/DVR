@@ -56,7 +56,7 @@ body{font-family:var(--font);background:var(--sur2);color:var(--ink);min-height:
 .kpi-tbl .ach-good{color:var(--green);font-weight:700;}
 .kpi-tbl .ach-mid{color:var(--amber);font-weight:700;}
 .kpi-tbl .ach-bad{color:var(--red);font-weight:700;}
-.kpi-input{width:100%;padding:5px 8px;border:1px solid var(--sur4);border-radius:4px;font-size:12px;font-family:var(--font);text-align:right;}
+.kpi-input{width:100%;padding:5px 8px;border:1px solid var(--sur4);border-radius:4px;font-size:12px;font-family:var(--font);text-align:right;box-sizing:border-box;}
 .kpi-input:focus{border-color:var(--red);outline:none;}
 /* Checklist */
 .chk-cat{margin-bottom:16px;}
@@ -1291,7 +1291,15 @@ function toast(msg,type){
       <div class="sec-hd"><span class="sec-title">Business KPIs</span><span class="sec-sub">Target vs Actual — current month</span></div>
       <div class="sec-bd">
         <div style="overflow-x:auto;">
-          <table class="kpi-tbl">
+          <table class="kpi-tbl" style="table-layout:fixed;width:100%;">
+            <colgroup>
+              <col style="width:auto">
+              <col style="width:90px"><!-- Target -->
+              <col style="width:90px"><!-- Actual -->
+              <col style="width:70px"><!-- Ach% -->
+              <col style="width:80px"><!-- YTD Avg -->
+              <col style="width:80px"><!-- Last Month -->
+            </colgroup>
             <thead><tr>
               <th>KPI</th>
               <th>Target</th>
