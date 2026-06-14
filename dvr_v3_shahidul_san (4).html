@@ -140,6 +140,17 @@ body{font-family:var(--font);background:var(--sur2);color:var(--ink);min-height:
 .review-kpi-box{background:#fff;border:1px solid var(--sur4);border-radius:var(--r);padding:8px 10px;}
 .review-kpi-l{font-size:10px;color:var(--ink3);margin-bottom:2px;}
 .review-kpi-v{font-size:15px;font-weight:500;}
+/* Log Tab */
+.log-sheet-bar{display:flex;gap:2px;padding:0 0 0 2px;border-bottom:2px solid var(--sur4);margin-bottom:0;overflow-x:auto;}
+.log-sheet-tab{padding:7px 16px;font-size:12px;font-weight:500;border:1px solid var(--sur4);border-bottom:none;border-radius:4px 4px 0 0;background:var(--sur3);color:var(--ink3);cursor:pointer;white-space:nowrap;margin-bottom:-2px;transition:all .15s;}
+.log-sheet-tab:hover{background:var(--sur2);color:var(--ink);}
+.log-sheet-active{background:#fff;color:var(--ink);border-color:var(--sur4);border-bottom-color:#fff;font-weight:600;}
+.log-tbl{width:100%;border-collapse:collapse;font-size:12px;min-width:600px;}
+.log-tbl th{background:var(--ink);color:#fff;padding:8px 10px;text-align:left;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;white-space:nowrap;position:sticky;top:0;}
+.log-tbl td{padding:7px 10px;border-bottom:1px solid var(--sur3);vertical-align:top;font-size:12px;}
+.log-tbl tr:hover td{background:var(--sur2);}
+.log-alt td{background:var(--sur2);}
+.log-tbl tr:last-child td{border-bottom:none;}
 /* Print */
 @media print{
   body{background:#fff!important;}
@@ -417,6 +428,7 @@ const TABS = [
   {id:"dash",    label:"📊 My Dashboard"},
   {id:"ics",     label:"📋 My ICS"},
   {id:"history", label:"🕐 History"},
+  {id:"log", label:"📒 Data Log"},
   {id:"export",  label:"⬇ Download Excel"},
 ];
 
@@ -1008,7 +1020,179 @@ function buildICSDlrFilter(){
   sel.innerHTML=`<option value="">All dealers</option>`;
   DEALERS.forEach(d=>{const o=document.createElement("option");o.value=d.id;o.textContent=d.name;sel.appendChild(o);});
 }
+<script id="log-js-paste">
+// ═══════════════════════════════
+// LOG TAB
+// ═══════════════════════════════
+const LOG_SHEETS = [
+  {id:"log-visits",   label:"Visits"},
+  {id:"log-kpi",      label:"KPI"},
+  {id:"log-checklist",label:"Checklist"},
+  {id:"log-findings", label:"Findings"},
+  {id:"log-ics",      label:"ICS"},
+  {id:"log-dashboard",label:"Dashboard"},
+];
 
+let activeLogSheet = "log-visits";
+
+function buildLog() {
+  buildLogSheetTabs();
+  showLogSheet(activeLogSheet);
+}
+
+function buildLogSheetTabs() {
+  const bar = document.getElementById("log-sheet-bar");
+  bar.innerHTML = LOG_SHEETS.map(s =>
+    `<button class="log-sheet-tab ${s.id === activeLogSheet ? "log-sheet-active" : ""}"
+      onclick="showLogSheet('${s.id}')">${s.label}</button>`
+  ).join("");
+}
+
+function showLogSheet(id) {
+  activeLogSheet = id;
+  buildLogSheetTabs();
+  const body = document.getElementById("log-body");
+
+  if (!db.visits.length && id !== "log-ics") {
+    body.innerHTML = `<div style="padding:20px;font-size:13px;color:var(--ink3);font-style:italic;">No visits submitted yet. Submit your first visit to see data here.</div>`;
+    return;
+  }
+
+  if (id === "log-visits")    body.innerHTML = buildLogVisits();
+  if (id === "log-kpi")       body.innerHTML = buildLogKPI();
+  if (id === "log-checklist") body.innerHTML = buildLogChecklist();
+  if (id === "log-findings")  body.innerHTML = buildLogFindings();
+  if (id === "log-ics")       body.innerHTML = buildLogICS();
+  if (id === "log-dashboard") body.innerHTML = buildLogDashboard();
+}
+
+function logTable(headers, rows, emptyMsg) {
+  if (!rows.length) return `<div style="padding:16px;font-size:13px;color:var(--ink3);font-style:italic;">${emptyMsg || "No data yet."}</div>`;
+  return `
+    <div style="overflow-x:auto;">
+      <table class="log-tbl">
+        <thead><tr>${headers.map(h => `<th>${h}</th>`).join("")}</tr></thead>
+        <tbody>${rows.map((r, i) =>
+          `<tr class="${i % 2 === 0 ? "" : "log-alt"}">${r.map(c => `<td>${c ?? "—"}</td>`).join("")}</tr>`
+        ).join("")}</tbody>
+      </table>
+    </div>`;
+}
+
+function buildLogVisits() {
+  const headers = ["#","Visit ID","Dealer","District","Thana","Date","Score","Max","Score %","Findings","Remarks"];
+  const rows = db.visits.map((v, i) => [
+    i + 1,
+    `<span style="font-size:10px;font-family:var(--mono);color:var(--ink3);">${v.visitId}</span>`,
+    `<strong>${v.dlrName}</strong>`,
+    v.district || "—",
+    v.thana || "—",
+    v.date,
+    v.score,
+    v.maxScore,
+    `<span style="font-weight:700;color:${v.pct >= 75 ? "var(--green)" : v.pct >= 50 ? "var(--amber)" : "var(--red)"};">${v.pct}%</span>`,
+    v.findings?.length || 0,
+    v.remarks ? `<span style="font-size:11px;color:var(--ink3);">${v.remarks.slice(0,40)}${v.remarks.length>40?"…":""}</span>` : "—"
+  ]);
+  return `<div style="padding:4px 0 10px;font-size:11px;color:var(--ink3);">${rows.length} visit(s) on record</div>` + logTable(headers, rows);
+}
+
+function buildLogKPI() {
+  const headers = ["#","Dealer","Date", ...KPI_DEFS.flatMap(k => [k.label+" Target", k.label+" Actual", k.label+" Ach%"])];
+  const rows = db.visits.map((v, i) => [
+    i + 1,
+    v.dlrName,
+    v.date,
+    ...KPI_DEFS.flatMap(k => {
+      const d = v.kpi?.[k.key] || {};
+      const achColor = d.ach >= 100 ? "var(--green)" : d.ach >= 80 ? "var(--amber)" : "var(--red)";
+      return [
+        d.target ? d.target.toLocaleString() : "—",
+        d.actual ? d.actual.toLocaleString() : "—",
+        d.ach != null ? `<span style="font-weight:700;color:${achColor};">${d.ach}%</span>` : "—"
+      ];
+    })
+  ]);
+  return `<div style="padding:4px 0 10px;font-size:11px;color:var(--ink3);">KPI data from ${rows.length} visit(s)</div>` + logTable(headers, rows);
+}
+
+function buildLogChecklist() {
+  const allRows = db.visits.flatMap(v =>
+    (v.checklist || []).map(c => [v.dlrName, v.date, c.cat, c.sub, c.item])
+  );
+  const headers = ["Dealer","Date","Category","Sub-Category","Checked Item"];
+  return `<div style="padding:4px 0 10px;font-size:11px;color:var(--ink3);">${allRows.length} checked item(s) across all visits</div>` + logTable(headers, allRows, "No checklist items recorded yet.");
+}
+
+function buildLogFindings() {
+  const allRows = db.visits.flatMap((v, vi) =>
+    (v.findings || []).map((f, fi) => [
+      vi + 1,
+      v.dlrName,
+      v.date,
+      `<span class="badge ${f.priority === "top" ? "badge-r" : "badge-a"}">${f.priority === "top" ? "Top" : "2nd"}</span>`,
+      f.gap || "—",
+      f.rootCause || "—",
+      f.action || "—",
+      f.byWhen || "—"
+    ])
+  );
+  const headers = ["#","Dealer","Date","Priority","Gap / Problem","Root Cause","Action","Due"];
+  return `<div style="padding:4px 0 10px;font-size:11px;color:var(--ink3);">${allRows.length} finding(s) total</div>` + logTable(headers, allRows, "No findings recorded yet.");
+}
+
+function buildLogICS() {
+  if (!db.ics.length) return `<div style="padding:20px;font-size:13px;color:var(--ink3);font-style:italic;">No ICS items yet. Findings from submitted visits appear here automatically.</div>`;
+  const headers = ["Dealer","Visit Date","Priority","Gap","Action","Due","Status","PIC"];
+  const rows = db.ics.map(i => {
+    const overdue = i.byWhen && i.byWhen < CUR_MONTH && i.status !== "Done";
+    const statusColor = i.status === "Done" ? "badge-g" : overdue ? "badge-r" : "badge-a";
+    return [
+      i.dlrName,
+      i.date,
+      `<span class="badge ${i.priority === "top" ? "badge-r" : "badge-a"}">${i.priority === "top" ? "Top" : "2nd"}</span>`,
+      i.gap || "—",
+      i.action || "—",
+      i.byWhen || "—",
+      `<span class="badge ${statusColor}">${i.status}${overdue ? " ⚠" : ""}</span>`,
+      i.pic || "—"
+    ];
+  });
+  return `<div style="padding:4px 0 10px;font-size:11px;color:var(--ink3);">${rows.length} ICS item(s) · ${db.ics.filter(i=>i.status!=="Done").length} open</div>` + logTable(headers, rows);
+}
+
+function buildLogDashboard() {
+  const dlrMap = {};
+  db.visits.forEach(v => {
+    if (!dlrMap[v.dlrId]) dlrMap[v.dlrId] = { name: v.dlrName, district: v.district || "", visits: [] };
+    dlrMap[v.dlrId].visits.push(v);
+  });
+  const headers = ["Dealer","District","Visits","Last Date","Last Score %","Prev Score %","Change","Open ICS","Overdue","Status"];
+  const rows = Object.entries(dlrMap).map(([did, d]) => {
+    const sorted = d.visits.sort((a, b) => a.date.localeCompare(b.date));
+    const last = sorted[sorted.length - 1];
+    const prev = sorted.length >= 2 ? sorted[sorted.length - 2] : null;
+    const change = prev && last.pct != null && prev.pct != null ? (last.pct - prev.pct) : null;
+    const openICS = db.ics.filter(i => i.dlrId === did && i.status !== "Done").length;
+    const overdue = db.ics.filter(i => i.dlrId === did && i.status !== "Done" && i.byWhen && i.byWhen < CUR_MONTH).length;
+    const bc = last.pct >= 75 ? "var(--green)" : last.pct >= 50 ? "var(--amber)" : "var(--red)";
+    const status = last.pct >= 75 ? "🟢 Good" : last.pct >= 50 ? "🟡 Watch" : "🔴 At risk";
+    return [
+      `<strong>${d.name}</strong>`,
+      d.district,
+      d.visits.length,
+      last.date,
+      `<span style="font-weight:700;color:${bc};">${last.pct}%</span>`,
+      prev ? prev.pct + "%" : "—",
+      change !== null ? `<span style="color:${change >= 0 ? "var(--green)" : "var(--red)"};">${change >= 0 ? "+" : ""}${change}%</span>` : "—",
+      openICS ? `<span style="color:var(--red);font-weight:700;">${openICS}</span>` : `<span style="color:var(--green);">0</span>`,
+      overdue ? `<span style="color:var(--red);font-weight:700;">${overdue}</span>` : "0",
+      status
+    ];
+  });
+  return `<div style="padding:4px 0 10px;font-size:11px;color:var(--ink3);">${rows.length} dealer(s) with visit history</div>` + logTable(headers, rows);
+}
+</script>
 // ═══════════════════════════════
 // HISTORY
 // ═══════════════════════════════
@@ -1432,7 +1616,25 @@ function toast(msg,type){
   </div>
   <div id="hist-body"></div>
 </div>
-
+<div class="pg" id="pg-log">
+  <div class="sec">
+    <div class="sec-hd">
+      <span class="sec-title">📒 Data Log</span>
+      <span class="sec-sub">Everything recorded so far — same data that goes into your Excel download</span>
+    </div>
+    <!-- Sheet tabs — like Excel tabs at the bottom but shown at top -->
+    <div class="log-sheet-bar" id="log-sheet-bar"></div>
+    <!-- Table body -->
+    <div id="log-body" style="overflow-x:auto;max-height:520px;overflow-y:auto;">
+      <div style="padding:20px;font-size:13px;color:var(--ink3);font-style:italic;">Select a sheet tab above to view data.</div>
+    </div>
+  </div>
+  <!-- Quick download from log tab -->
+  <div style="margin-top:10px;display:flex;align-items:center;gap:10px;">
+    <button class="btn btn-green" onclick="downloadExcel()">⬇ Download Excel Now</button>
+    <span style="font-size:12px;color:var(--ink3);">Downloads all 6 tabs as .xlsx — exactly what you see above</span>
+  </div>
+</div>
 <!-- ═══════ EXPORT ═══════ -->
 <div class="pg" id="pg-export">
   <div class="sec">
