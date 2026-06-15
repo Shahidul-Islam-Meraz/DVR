@@ -403,7 +403,6 @@ const CHECKLIST = [
 
 const KPI_DEFS = [
   {key:"svcVisit",  label:"Service Visit",       unit:"jobs"},
-  {key:"scrPct",    label:"SCR %",                unit:"%"},
   {key:"eoRetail",  label:"EO Retail (In-house)", unit:"BDT"},
   {key:"eoWhole",   label:"EO Wholesale",         unit:"BDT"},
   {key:"partsRetail",label:"Parts Retail",        unit:"BDT"},
@@ -885,7 +884,7 @@ function buildPrintPage(v, pct){
   $("pg-print").innerHTML=`
     <div class="print-header">
       <div>
-        <div class="print-logo">🏍 BHL HONDA — Dealer Visit Report</div>
+        <div class="print-logo"> BHL HONDA — Dealer Visit Report</div>
         <div class="print-sub">Acknowledgement Copy · Confidential — Internal Use Only</div>
       </div>
       <div style="text-align:right;font-size:9px;color:#888;">
